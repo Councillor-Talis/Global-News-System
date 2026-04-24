@@ -79,6 +79,9 @@
             </span>
             <template #dropdown>
               <el-dropdown-menu>
+                <el-dropdown-item @click="$router.push('/profile')">
+                  个人中心
+                </el-dropdown-item>
                 <el-dropdown-item v-if="userStore.isAdmin" @click="$router.push('/admin')">
                   管理后台
                 </el-dropdown-item>

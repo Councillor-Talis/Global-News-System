@@ -7,6 +7,7 @@ const routes = [
     { path: '/search', component: () => import('../views/Search.vue') },
     { path: '/login', component: () => import('../views/Login.vue') },
     { path: '/register', component: () => import('../views/Register.vue') },
+    { path: '/profile', component: () => import('../views/Profile.vue'), meta: { requiresAuth: true } },
     {
         path: '/admin',
         component: () => import('../views/admin/AdminLayout.vue'),

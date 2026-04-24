@@ -16,4 +16,15 @@ public interface UserService {
     IPage<User> listUsers(Integer page, Integer size);
     void updateUserStatus(Long id, Integer status);
     StatsVO getStats();
+
+    // 获取当前用户信息
+    User getUserById(Long userId);
+
+    // 修改用户名
+    void updateUsername(Long userId, String username);
+
+    // 更新头像
+    String updateAvatar(Long userId, org.springframework.web.multipart.MultipartFile file);
+
 }
+
