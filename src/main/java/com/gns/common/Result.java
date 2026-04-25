@@ -31,4 +31,12 @@ public class Result<T> {
         r.code = code; r.message = message;
         return r;
     }
+
+    public static <T> Result<T> success(String message, T data) {
+        Result<T> r = new Result<>();
+        r.code = 200;
+        r.message = message;
+        r.data = data;
+        return r;
+    }
 }

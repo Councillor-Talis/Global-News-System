@@ -1,6 +1,5 @@
 package com.gns.controller;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.gns.common.BusinessException;
 import com.gns.common.Result;
 import com.gns.dto.CommentDTO;
@@ -13,6 +12,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/comment")
 @RequiredArgsConstructor
@@ -21,13 +22,11 @@ public class CommentController {
     private final CommentService commentService;
     private final JwtUtil jwtUtil;
 
-    /** 获取文章评论列表（无需登录） */
+    /** 获取文章评论列表（无需登录，已登录时返回点赞状态） */
     @GetMapping("/list")
-    public Result<IPage<Comment>> list(
-            @RequestParam Long articleId,
-            @RequestParam(defaultValue = "1") Integer page,
-            @RequestParam(defaultValue = "10") Integer size) {
-        return Result.success(commentService.listByArticle(articleId, page, size));
+    public Result<List<Comment>> list(@RequestParam Long articleId) {
+        Long currentUserId = getCurrentUserId();
+        return Result.success(commentService.listByArticle(articleId, currentUserId));
     }
 
     /** 获取评论数量 */
@@ -36,41 +35,59 @@ public class CommentController {
         return Result.success(commentService.countByArticle(articleId));
     }
 
-    /** 发表评论（需要登录） */
+    /** 发表评论或回复 */
     @PostMapping("/add")
     public Result<?> add(@Valid @RequestBody CommentDTO dto) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth == null || !auth.isAuthenticated() || "anonymousUser".equals(auth.getPrincipal())) {
-            throw new BusinessException(401, "请先登录后再评论");
-        }
-        Long userId = (Long) auth.getPrincipal();
-        // 从 token 里取用户名
-        String token = getTokenFromAuth(auth);
-        String username = token != null ? jwtUtil.getUsername(token) : "用户" + userId;
+        Long userId = requireLogin();
+        String username = getUsername();
         commentService.addComment(dto, userId, username);
         return Result.success("评论成功");
     }
 
-    /** 删除评论（本人或管理员） */
+    /** 点赞 / 取消点赞 */
+    @PostMapping("/like/{id}")
+    public Result<Boolean> like(@PathVariable Long id) {
+        Long userId = requireLogin();
+        boolean liked = commentService.toggleLike(id, userId);
+        return Result.success(liked ? "点赞成功" : "已取消点赞", liked);
+    }
+
+    /** 删除评论 */
     @DeleteMapping("/{id}")
     public Result<?> delete(@PathVariable Long id) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth == null || !auth.isAuthenticated()) {
-            throw new BusinessException(401, "请先登录");
-        }
-        Long userId = (Long) auth.getPrincipal();
-        boolean isAdmin = auth.getAuthorities().stream()
+        Long userId = requireLogin();
+        boolean isAdmin = getAuth().getAuthorities().stream()
                 .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
         commentService.deleteComment(id, userId, isAdmin);
         return Result.success("删除成功");
     }
 
-    private String getTokenFromAuth(Authentication auth) {
+    // ===== 私有工具方法 =====
+
+    private Authentication getAuth() {
+        return SecurityContextHolder.getContext().getAuthentication();
+    }
+
+    private Long getCurrentUserId() {
+        Authentication auth = getAuth();
+        if (auth == null || !auth.isAuthenticated()
+                || "anonymousUser".equals(auth.getPrincipal())) return null;
+        try { return (Long) auth.getPrincipal(); } catch (Exception e) { return null; }
+    }
+
+    private Long requireLogin() {
+        Long userId = getCurrentUserId();
+        if (userId == null) throw new BusinessException(401, "请先登录");
+        return userId;
+    }
+
+    private String getUsername() {
+        Authentication auth = getAuth();
         try {
-            Object credentials = auth.getCredentials();
-            return credentials != null ? credentials.toString() : null;
+            String token = auth.getCredentials().toString();
+            return jwtUtil.getUsername(token);
         } catch (Exception e) {
-            return null;
+            return "用户" + getCurrentUserId();
         }
     }
 }

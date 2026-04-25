@@ -36,6 +36,7 @@ public class SecurityConfig {
                         // 公开接口
                         .requestMatchers("/api/user/login", "/api/user/register").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/news/**", "/api/category/**", "/api/comment/**").permitAll()
+                        .requestMatchers("/uploads/**").permitAll()
                         // 管理员接口
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         // 其他需要登录
