@@ -9,12 +9,12 @@
       <div class="tabs">
         <!-- 普通分类 -->
         <span
-            v-for="cat in categories" :key="cat.id"
+            v-for="cat in categories.filter(c => c.code !== 'hot')" :key="cat.id"
             class="tab"
             :class="{ active: activeCategoryId === cat.id && !hotMode }"
             @click="onCategoryClick(cat.id)">
-          {{ cat.name }}
-        </span>
+  {{ cat.name }}
+</span>
 
         <!-- 热点分栏 -->
         <div class="hot-wrap" ref="hotRef" v-if="showHot">
