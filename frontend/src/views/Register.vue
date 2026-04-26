@@ -24,6 +24,10 @@
           </el-form-item>
           <el-form-item prop="password">
             <el-input v-model="form.password" placeholder="请输入密码" type="password"
+                      size="large" show-password />
+          </el-form-item>
+          <el-form-item prop="confirmPassword">
+            <el-input v-model="form.confirmPassword" placeholder="请确认密码" type="password"
                       size="large" show-password @keyup.enter="handleRegister" />
           </el-form-item>
           <el-button type="primary" size="large" :loading="loading" class="login-btn"
@@ -49,8 +53,56 @@ import { register } from '../api/user'
 const router = useRouter()
 const formRef = ref()
 const loading = ref(false)
-const form = ref({ username: '', email: '', password: '' })
-const rules = {}
+const form = ref({ username: '', email: '', password: '', confirmPassword: '' })
+const validateUsername = (rule, value, callback) => {
+  if (value && /[^a-zA-Z0-9\u4e00-\u9fa5]/.test(value)) {
+    callback(new Error('不能包含特殊字符'))
+  } else {
+    callback()
+  }
+}
+
+const validateEmail = (rule, value, callback) => {
+  if (value && /[^a-zA-Z0-9@.]/.test(value)) {
+    callback(new Error('不能包含特殊字符'))
+  } else {
+    callback()
+  }
+}
+
+const validatePassword = (rule, value, callback) => {
+  if (value && /[^a-zA-Z0-9]/.test(value)) {
+    callback(new Error('不能包含特殊字符'))
+  } else {
+    callback()
+  }
+}
+
+const rules = {
+  username: [
+    { validator: validateUsername, trigger: 'blur' }
+  ],
+  email: [
+    { validator: validateEmail, trigger: 'blur' }
+  ],
+  password: [
+    { validator: validatePassword, trigger: 'blur' }
+  ],
+  confirmPassword: [
+    {
+      validator: (rule, value, callback) => {
+        if (value === '') {
+          callback()
+        } else if (value !== form.value.password) {
+          callback(new Error('两次输入密码不一致!'))
+        } else {
+          callback()
+        }
+      },
+      trigger: 'blur'
+    }
+  ]
+}
 
 async function handleRegister() {
   if (!formRef.value) return
@@ -58,7 +110,11 @@ async function handleRegister() {
     if (valid) {
       loading.value = true
       try {
-        await register(form.value)
+        await register({
+          username: form.value.username,
+          email: form.value.email,
+          password: form.value.password
+        })
         ElMessage.success('注册成功，请登录')
         router.push('/login')
       } catch (err) {
