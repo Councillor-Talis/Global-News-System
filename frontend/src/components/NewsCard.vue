@@ -190,4 +190,12 @@ function formatTime(time) {
   border-radius: 2px;
   padding: 0 1px;
 }
+
+:deep(em.highlight) {
+  background: #fef08a;
+  color: #1e293b;
+  font-style: normal;
+  border-radius: 2px;
+  padding: 0 1px;
+}
 </style>

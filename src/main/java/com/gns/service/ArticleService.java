@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.gns.dto.ArticleDTO;
 import com.gns.entity.Article;
 import java.util.List;
+import com.gns.search.SearchResult;
 
 public interface ArticleService {
     IPage<Article> listArticles(Integer page, Integer size, Long categoryId, String source);
@@ -14,5 +15,5 @@ public interface ArticleService {
     void updateStatus(Long id, Integer status);
     void deleteAllArticles();
     List<Article> getHotArticles();                          // 热点文章
-    IPage<Article> searchArticles(String keyword, Integer page, Integer size); // 搜索
+    SearchResult searchArticles(String keyword, Integer page, Integer size);
 }

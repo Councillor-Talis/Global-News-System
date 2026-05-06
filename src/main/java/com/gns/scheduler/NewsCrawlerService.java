@@ -5,6 +5,7 @@ import com.gns.entity.Article;
 import com.gns.entity.SourceConfig;
 import com.gns.mapper.ArticleMapper;
 import com.gns.mapper.SourceConfigMapper;
+import com.gns.search.ElasticsearchService;
 import com.gns.utils.RedisUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +30,7 @@ public class NewsCrawlerService {
     private final RestTemplate restTemplate;
     private final ArticleContentFetcher contentFetcher;  // 注入正文抓取器
     private final ArticleCategorizer categorizer;
+    private final ElasticsearchService elasticsearchService;
 
     @Value("${gns.newsapi.key}")
     private String apiKey;
@@ -132,6 +134,7 @@ public class NewsCrawlerService {
             article.setStatus(1);
 
             articleMapper.insert(article);
+            elasticsearchService.indexArticle(article);
             inserted++;
         }
 

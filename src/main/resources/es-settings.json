@@ -1,0 +1,14 @@
+{
+  "analysis": {
+    "analyzer": {
+      "ik_smart_analyzer": {
+        "type": "custom",
+        "tokenizer": "ik_smart"
+      },
+      "ik_max_word_analyzer": {
+        "type": "custom",
+        "tokenizer": "ik_max_word"
+      }
+    }
+  }
+}
