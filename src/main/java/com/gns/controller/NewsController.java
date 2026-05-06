@@ -40,7 +40,7 @@ public class NewsController {
 
     // 搜索
     @GetMapping("/news/search")
-    public Result<IPage<Article>> search(
+    public Result<?> search(
             @RequestParam String keyword,
             @RequestParam(defaultValue = "1") Integer page,
             @RequestParam(defaultValue = "9") Integer size) {

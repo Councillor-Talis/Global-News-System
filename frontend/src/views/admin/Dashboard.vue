@@ -25,7 +25,10 @@
       <h3>最新文章</h3>
       <div style="display:flex;gap:8px">
         <el-button size="small" type="warning" :loading="crawling" @click="triggerCrawl">
-          🔄 手动采集
+          手动采集
+        </el-button>
+        <el-button size="small" type="info" :loading="reindexing" @click="handleReindex">
+          重建ES索引
         </el-button>
         <el-button size="small" @click="$router.push('/admin/articles')">查看全部</el-button>
       </div>
@@ -50,13 +53,14 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
-import { getStats, getAdminArticleList, triggerCrawl as triggerCrawlApi } from '../../api/admin'
+import { getStats, getAdminArticleList, triggerCrawl as triggerCrawlApi, reindexES } from '../../api/admin'
 
 const stats = ref({})
 const articles = ref([])
 const statsLoading = ref(false)
 const tableLoading = ref(false)
 const crawling = ref(false)
+const reindexing = ref(false)
 
 onMounted(async () => {
   statsLoading.value = true
@@ -89,6 +93,18 @@ async function triggerCrawl() {
     crawling.value = false
   }
 }
+
+async function handleReindex() {
+  reindexing.value = true
+  try {
+    const res = await reindexES()
+    ElMessage.success(res.data)
+  } finally {
+    reindexing.value = false
+  }
+}
+
+
 
 function formatNum(n) {
   if (!n) return '0'

@@ -5,6 +5,8 @@ import com.gns.common.Result;
 import com.gns.dto.ArticleDTO;
 import com.gns.entity.Article;
 import com.gns.entity.User;
+import com.gns.scheduler.NewsCrawlerService;
+import com.gns.search.ElasticsearchService;
 import com.gns.service.ArticleService;
 import com.gns.service.UserService;
 import com.gns.vo.StatsVO;
@@ -12,7 +14,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import com.gns.scheduler.NewsCrawlerService;
 
 @RestController
 @RequestMapping("/api/admin")
@@ -23,6 +24,7 @@ public class AdminController {
     private final ArticleService articleService;
     private final UserService userService;
     private final NewsCrawlerService newsCrawlerService;
+    private final ElasticsearchService elasticsearchService;  // ← 加这行
 
     // ===== 统计数据 =====
     @GetMapping("/stats")
@@ -78,17 +80,24 @@ public class AdminController {
         return Result.success("操作成功");
     }
 
-    /** 手动触发一次采集 */
+    // ===== 采集 =====
     @PostMapping("/crawler/trigger")
     public Result<String> triggerCrawl() {
         String result = newsCrawlerService.manualCrawl();
         return Result.success(result);
     }
 
-    /** 删除所有文章 */
+    // ===== 文章批量操作 =====
     @DeleteMapping("/article/all")
     public Result<?> deleteAll() {
         articleService.deleteAllArticles();
         return Result.success("已清空所有文章");
+    }
+
+    // ===== ES 索引管理 =====
+    @PostMapping("/es/reindex")
+    public Result<String> reindex() {
+        int count = elasticsearchService.indexAllArticles();
+        return Result.success("索引重建完成，共索引 " + count + " 篇文章");
     }
 }

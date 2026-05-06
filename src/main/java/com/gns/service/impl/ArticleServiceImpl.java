@@ -9,6 +9,7 @@ import com.gns.common.BusinessException;
 import com.gns.dto.ArticleDTO;
 import com.gns.entity.Article;
 import com.gns.mapper.ArticleMapper;
+import com.gns.search.ElasticsearchService;
 import com.gns.service.ArticleService;
 import com.gns.utils.RedisUtil;
 import lombok.RequiredArgsConstructor;
@@ -17,15 +18,17 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
+import com.gns.search.SearchResult;
+
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class ArticleServiceImpl implements ArticleService {
 
+public class ArticleServiceImpl implements ArticleService {
     private final ArticleMapper articleMapper;
     private final RedisUtil redisUtil;
-
+    private final ElasticsearchService elasticsearchService;
     private static final String CACHE_PREFIX = "news:list:";
     private static final String HOT_CACHE_KEY = "news:hot";
     private static final long CACHE_SECONDS = 300;
@@ -70,16 +73,8 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public IPage<Article> searchArticles(String keyword, Integer page, Integer size) {
-        LambdaQueryWrapper<Article> wrapper = new LambdaQueryWrapper<Article>()
-                .eq(Article::getStatus, 1)
-                .and(w -> w
-                        .like(Article::getTitle, keyword)
-                        .or()
-                        .like(Article::getSummary, keyword)
-                )
-                .orderByDesc(Article::getPubTime);
-        return articleMapper.selectPage(new Page<>(page, size), wrapper);
+    public SearchResult searchArticles(String keyword, Integer page, Integer size) {
+        return elasticsearchService.search(keyword, page, size);
     }
 
     @Override
@@ -90,6 +85,7 @@ public class ArticleServiceImpl implements ArticleService {
         if (article.getStatus() == null) article.setStatus(1);
         articleMapper.insert(article);
         clearCache();
+        elasticsearchService.indexArticle(article);
     }
 
     @Override
@@ -99,12 +95,14 @@ public class ArticleServiceImpl implements ArticleService {
         BeanUtils.copyProperties(dto, article);
         articleMapper.updateById(article);
         clearCache();
+        elasticsearchService.indexArticle(article);
     }
 
     @Override
     public void deleteArticle(Long id) {
         articleMapper.deleteById(id);
         clearCache();
+        elasticsearchService.deleteArticle(id);
     }
 
     @Override

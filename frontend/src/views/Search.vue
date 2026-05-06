@@ -104,15 +104,18 @@ async function doSearch() {
   const kw = keyword.value.trim()
   if (!kw) return
 
-  // 更新 URL
   router.replace({ path: '/search', query: { keyword: kw } })
 
   loading.value = true
   searched.value = false
   try {
     const res = await searchNews({ keyword: kw, page: currentPage.value, size: 9 })
-    articles.value = res.data.records
-    total.value = res.data.total
+    // ES 返回 { total, page, size, records }
+    // MyBatis 返回 { total, records, current, size }
+    // 两种格式都兼容
+    const data = res.data
+    articles.value = data.records || []
+    total.value = data.total || 0
     lastKeyword.value = kw
     searched.value = true
   } finally {
