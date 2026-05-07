@@ -47,6 +47,14 @@ public class NewsController {
         return Result.success(articleService.searchArticles(keyword, page, size));
     }
 
+    /** 相关推荐：同分类文章，排除当前文章 */
+    @GetMapping("/news/related")
+    public Result<?> related(
+            @RequestParam Long categoryId,
+            @RequestParam Long excludeId) {
+        return Result.success(articleService.getRelatedArticles(categoryId, excludeId));
+    }
+
     @GetMapping("/category/list")
     public Result<List<Category>> categories() {
         return Result.success(categoryService.listAll());

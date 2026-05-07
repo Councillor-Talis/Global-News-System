@@ -139,6 +139,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void deleteUser(Long id) {
+        User user = userMapper.selectById(id);
+        if (user == null) throw new BusinessException("用户不存在");
+        if (user.getRole() == 1) throw new BusinessException("不能删除管理员账号");
+        userMapper.deleteById(id);
+    }
+
+    @Override
     public String updateAvatar(Long userId, MultipartFile file) {
         if (file == null || file.isEmpty()) throw new BusinessException("请选择文件");
 

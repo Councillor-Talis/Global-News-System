@@ -17,3 +17,5 @@ export const triggerCrawl = () => request.post('/admin/crawler/trigger')
 export const deleteAllArticles = () => request.delete('/admin/article/all')
 
 export const reindexES = () => request.post('/admin/es/reindex')
+
+export const deleteUser = (id) => request.delete(`/admin/user/${id}`)

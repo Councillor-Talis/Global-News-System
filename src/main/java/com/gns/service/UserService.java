@@ -23,6 +23,8 @@ public interface UserService {
     // 修改用户名
     void updateUsername(Long userId, String username);
 
+    void deleteUser(Long id);
+
     // 更新头像
     String updateAvatar(Long userId, org.springframework.web.multipart.MultipartFile file);
 

@@ -124,4 +124,16 @@ public class ArticleServiceImpl implements ArticleService {
         articleMapper.delete(null);  // null = 不加条件，删除全部
         clearCache();
     }
+
+    @Override
+    public List<Article> getRelatedArticles(Long categoryId, Long excludeId) {
+        return articleMapper.selectList(
+                new LambdaQueryWrapper<Article>()
+                        .eq(Article::getStatus, 1)
+                        .eq(Article::getCategoryId, categoryId)
+                        .ne(Article::getId, excludeId)       // 排除当前文章
+                        .orderByDesc(Article::getPubTime)
+                        .last("LIMIT 6")                     // 只取6条
+        );
+    }
 }
