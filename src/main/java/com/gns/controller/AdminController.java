@@ -80,6 +80,12 @@ public class AdminController {
         return Result.success("操作成功");
     }
 
+    @DeleteMapping("/user/{id}")
+    public Result<?> deleteUser(@PathVariable Long id) {
+        userService.deleteUser(id);
+        return Result.success("删除成功");
+    }
+
     // ===== 采集 =====
     @PostMapping("/crawler/trigger")
     public Result<String> triggerCrawl() {

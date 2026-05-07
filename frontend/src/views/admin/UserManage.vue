@@ -24,7 +24,7 @@
         </template>
       </el-table-column>
       <el-table-column prop="createdAt" label="注册时间" width="170" />
-      <el-table-column label="操作" width="120">
+      <el-table-column label="操作" width="180">
         <template #default="{ row }">
           <el-popconfirm
               :title="row.status === 1 ? '确认禁用该用户？' : '确认启用该用户？'"
@@ -32,9 +32,24 @@
             <template #reference>
               <el-button
                   size="small"
-                  :type="row.status === 1 ? 'danger' : 'success'"
+                  :type="row.status === 1 ? 'warning' : 'success'"
                   :disabled="row.role === 1">
                 {{ row.status === 1 ? '禁用' : '启用' }}
+              </el-button>
+            </template>
+          </el-popconfirm>
+
+          <el-popconfirm
+              title="确认删除操作？"
+              confirm-button-text="确认删除"
+              confirm-button-type="danger"
+              @confirm="handleDelete(row.id)">
+            <template #reference>
+              <el-button
+                  size="small"
+                  type="danger"
+                  :disabled="row.role === 1">
+                删除
               </el-button>
             </template>
           </el-popconfirm>
@@ -56,7 +71,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
-import { getUserList, updateUserStatus } from '../../api/admin'
+import { getUserList, updateUserStatus, deleteUser } from '../../api/admin'
 
 const users = ref([])
 const loading = ref(false)
@@ -79,6 +94,12 @@ async function loadData() {
 async function toggleStatus(row) {
   await updateUserStatus(row.id, row.status === 1 ? 0 : 1)
   ElMessage.success('操作成功')
+  loadData()
+}
+
+async function handleDelete(id) {
+  await deleteUser(id)
+  ElMessage.success('删除成功')
   loadData()
 }
 </script>

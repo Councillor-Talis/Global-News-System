@@ -16,4 +16,6 @@ public interface ArticleService {
     void deleteAllArticles();
     List<Article> getHotArticles();                          // 热点文章
     SearchResult searchArticles(String keyword, Integer page, Integer size);
+
+    List<Article> getRelatedArticles(Long categoryId, Long excludeId);
 }

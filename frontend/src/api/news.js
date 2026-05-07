@@ -5,3 +5,5 @@ export const getNewsDetail = (id) => request.get(`/news/detail/${id}`)
 export const getCategoryList = () => request.get('/category/list')
 export const getHotNews = () => request.get('/news/hot')
 export const searchNews = (params) => request.get('/news/search', { params })
+export const getRelatedNews = (categoryId, excludeId) =>
+    request.get('/news/related', { params: { categoryId, excludeId } })
