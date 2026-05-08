@@ -67,7 +67,7 @@ public class ArticleServiceImpl implements ArticleService {
         if (cached != null) {
             return JSON.parseArray(cached, Article.class);
         }
-        List<Article> list = articleMapper.selectTop5ByViewCount();
+        List<Article> list = articleMapper.selectTop9ByViewCount();
         redisUtil.set(HOT_CACHE_KEY, JSON.toJSONString(list), CACHE_SECONDS);
         return list;
     }

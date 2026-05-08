@@ -28,7 +28,7 @@
           <!-- 热点下拉面板 -->
           <transition name="fade">
             <div class="hot-panel" v-if="hotOpen">
-              <div class="hot-title">热点新闻 TOP 5</div>
+              <div class="hot-title">热点新闻 TOP 9</div>
               <div v-if="hotLoading" class="hot-loading">
                 <el-skeleton :rows="3" animated />
               </div>
@@ -74,7 +74,11 @@
         <template v-if="userStore.isLoggedIn">
           <el-dropdown>
             <span class="user-info">
-              <el-avatar :size="28" icon="UserFilled" />
+              <el-avatar
+                :size="28"
+                :src="userStore.userInfo?.avatar || ''"
+                :icon="userStore.userInfo?.avatar ? undefined : 'UserFilled'"
+              />
               <span>{{ userStore.userInfo?.username }}</span>
             </span>
             <template #dropdown>
@@ -217,6 +221,7 @@ async function handleLogout() {
   border: 1px solid #e2e8f0; border-radius: 12px;
   box-shadow: 0 8px 30px rgba(0,0,0,0.12);
   padding: 12px; z-index: 200;
+  max-height: 520px; overflow-y: auto;
 }
 .hot-title {
   font-size: 13px; font-weight: 600; color: #64748b;

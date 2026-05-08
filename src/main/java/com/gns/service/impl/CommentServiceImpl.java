@@ -7,6 +7,7 @@ import com.gns.entity.Comment;
 import com.gns.entity.CommentLike;
 import com.gns.mapper.CommentLikeMapper;
 import com.gns.mapper.CommentMapper;
+import com.gns.mapper.UserMapper;
 import com.gns.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ public class CommentServiceImpl implements CommentService {
 
     private final CommentMapper commentMapper;
     private final CommentLikeMapper commentLikeMapper;
+    private final UserMapper userMapper;
 
     @Override
     public List<Comment> listByArticle(Long articleId, Long currentUserId) {
@@ -78,6 +80,12 @@ public class CommentServiceImpl implements CommentService {
         topComments.forEach(c -> c.setReplies(
                 replyMap.getOrDefault(c.getId(), Collections.emptyList())
         ));
+
+        // 6. 批量填充头像：收集所有 userId，一次查表
+        Set<Long> userIds = new HashSet<>();
+        all.forEach(c -> userIds.add(c.getUserId()));
+        Map<Long, String> avatarMap = userMapper.selectAvatarByIds(userIds);
+        all.forEach(c -> c.setAvatar(avatarMap.getOrDefault(c.getUserId(), null)));
 
         return topComments;
     }
