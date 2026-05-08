@@ -19,7 +19,7 @@ public interface ArticleMapper extends BaseMapper<Article> {
     @Select("SELECT COALESCE(SUM(view_count), 0) FROM t_article WHERE status = 1")
     Long totalViewCount();
 
-    // 热点文章：浏览量前5
-    @Select("SELECT * FROM t_article WHERE status = 1 ORDER BY view_count DESC LIMIT 5")
-    List<Article> selectTop5ByViewCount();
+    // 热点文章：浏览量前9
+    @Select("SELECT * FROM t_article WHERE status = 1 ORDER BY view_count DESC LIMIT 9")
+    List<Article> selectTop9ByViewCount();
 }

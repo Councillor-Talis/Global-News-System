@@ -21,10 +21,13 @@ public class Comment {
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createdAt;
 
-    // 非数据库字段：子回复列表 + 当前用户是否已点赞
+    // 非数据库字段：子回复列表 + 当前用户是否已点赞 + 发言人头像
     @TableField(exist = false)
     private List<Comment> replies;
 
     @TableField(exist = false)
     private Boolean liked;
+
+    @TableField(exist = false)
+    private String avatar;
 }

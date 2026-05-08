@@ -10,6 +10,11 @@ export default defineConfig({
       '/api': {
         target: 'http://localhost:8080',
         changeOrigin: true,
+      },
+      // 头像等静态资源转发到后端 8080
+      '/uploads': {
+        target: 'http://localhost:8080',
+        changeOrigin: true,
       }
     }
   }

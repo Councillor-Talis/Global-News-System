@@ -11,7 +11,11 @@
     <div class="comment-input-wrap">
       <template v-if="userStore.isLoggedIn">
         <div class="input-row">
-          <el-avatar :size="36" icon="UserFilled" />
+          <el-avatar
+              :size="36"
+              :src="userStore.userInfo?.avatar || ''"
+              :icon="userStore.userInfo?.avatar ? undefined : 'UserFilled'"
+          />
           <div class="input-right">
             <el-input
                 v-model="content"
@@ -56,7 +60,12 @@
       <div v-for="comment in comments" :key="comment.id" class="comment-item">
 
         <!-- 顶级评论 -->
-        <el-avatar :size="38" icon="UserFilled" class="avatar" />
+        <el-avatar
+            :size="38"
+            :src="comment.avatar || ''"
+            :icon="comment.avatar ? undefined : 'UserFilled'"
+            class="avatar"
+        />
         <div class="comment-body">
 
           <!-- 评论头部 -->
@@ -121,7 +130,12 @@
           <!-- 子回复列表 -->
           <div v-if="comment.replies && comment.replies.length > 0" class="replies">
             <div v-for="reply in comment.replies" :key="reply.id" class="reply-item">
-              <el-avatar :size="28" icon="UserFilled" class="reply-avatar" />
+              <el-avatar
+                  :size="28"
+                  :src="reply.avatar || ''"
+                  :icon="reply.avatar ? undefined : 'UserFilled'"
+                  class="reply-avatar"
+              />
               <div class="reply-body">
                 <div class="comment-header">
                   <span class="username">{{ reply.username }}</span>
