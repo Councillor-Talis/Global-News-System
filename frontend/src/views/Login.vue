@@ -6,12 +6,13 @@
         <line x1="2" y1="12" x2="22" y2="12"></line>
         <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
       </svg>
-      全球新闻管理系统
+      全球新闻系统
+      <span class="en-title">Global News System</span>
     </div>
     <div class="login-container">
       <div class="brand">
         <h1>整合全球信息，使人人受益</h1>
-        <p class="slogan">真实 · 客观 · 时效 · 公共价值</p>
+        <p class="slogan">Explore the world through news</p>
       </div>
       <div class="login-box">
         <el-form :model="form" :rules="rules" ref="formRef" class="login-form">
@@ -30,6 +31,9 @@
           <div class="links">
             <a href="#" @click.prevent>忘记密码?</a>
             <router-link to="/register">注册</router-link>
+          </div>
+          <div class="terms-text">
+            继续即表示您同意GNS 的 <a href="#">服务条款</a> 和 <a href="#">隐私政策</a>。
           </div>
         </el-form>
       </div>
@@ -112,7 +116,7 @@ async function handleLogin() {
   top: 50px;
   left: 60px;
   color: #ffffff;
-  font-size: 48px;
+  font-size: 32px;
   font-weight: bold;
   letter-spacing: 2px;
   display: flex;
@@ -120,9 +124,18 @@ async function handleLogin() {
   gap: 16px;
 }
 .top-icon {
-  width: 48px;
-  height: 48px;
+  width: 32px;
+  height: 32px;
   color: #ff2a55;
+}
+.en-title {
+  font-size: 20px;
+  color: #888;
+  font-weight: 500;
+  letter-spacing: 1px;
+  margin-left: 4px;
+  border-left: 2px solid #333;
+  padding-left: 16px;
 }
 .brand h1 {
   font-size: 48px;
@@ -198,6 +211,19 @@ async function handleLogin() {
   text-decoration: none; 
 }
 .links a:hover {
+  text-decoration: underline;
+}
+.terms-text {
+  margin-top: 15px;
+  font-size: 12px;
+  color: #888;
+  text-align: center;
+}
+.terms-text a {
+  color: #ff2a55;
+  text-decoration: none;
+}
+.terms-text a:hover {
   text-decoration: underline;
 }
 </style>

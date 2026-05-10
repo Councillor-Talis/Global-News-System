@@ -1,25 +1,25 @@
 <template>
   <div class="page">
-    <NavBar :categories="[]" />
+    <NavBar :categories="[]" :showHot="false" :showSearchInput="false" />
     <div class="container">
 
       <!-- 搜索头部 -->
       <div class="search-header">
-        <div class="search-bar">
-          <el-input
+        <div class="google-search-container">
+          <div class="google-search-box" :class="{ 'is-focused': isFocused }">
+            <el-icon class="search-icon"><Search /></el-icon>
+            <input
+              type="text"
               v-model="keyword"
-              placeholder="搜索新闻..."
-              size="large"
-              clearable
+              placeholder="搜索全球新闻..."
               @keyup.enter="doSearch"
-              @clear="doSearch"
-              style="max-width: 560px">
-            <template #prefix><el-icon><Search /></el-icon></template>
-            <template #append>
-              <el-button type="primary" @click="doSearch">搜索</el-button>
-            </template>
-          </el-input>
+              @focus="isFocused = true"
+              @blur="isFocused = false"
+            />
+            <span v-if="keyword" class="clear-icon" @mousedown.prevent="clearSearch">×</span>
+          </div>
         </div>
+
         <div class="result-info" v-if="!loading && searched">
           找到 <strong>{{ total }}</strong> 条与
           "<strong>{{ lastKeyword }}</strong>" 相关的新闻
@@ -82,6 +82,11 @@ const searched = ref(false)
 const total = ref(0)
 const currentPage = ref(1)
 
+const isFocused = ref(false)
+function clearSearch() {
+  keyword.value = ''
+}
+
 onMounted(async () => {
   const res = await getCategoryList()
   categories.value = res.data
@@ -131,9 +136,65 @@ function getCategoryName(categoryId) {
 <style scoped>
 .page { min-height: 100vh; background: #f8fafc; }
 .container { max-width: 1200px; margin: 0 auto; padding: 32px 24px; }
-.search-header { margin-bottom: 32px; }
-.search-bar { margin-bottom: 16px; }
-.result-info { font-size: 14px; color: #64748b; }
+.search-header { margin-bottom: 40px; }
+
+.google-search-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+.google-search-box {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 680px;
+  height: 52px;
+  background: #ffffff;
+  border: 1px solid #dfe1e5;
+  border-radius: 26px;
+  padding: 0 20px;
+  transition: box-shadow 0.2s, border-color 0.2s;
+}
+.google-search-box:hover,
+.google-search-box.is-focused {
+  background: #ffffff;
+  box-shadow: 0 1px 6px rgba(32,33,36,0.28);
+  border-color: rgba(223,225,229,0);
+}
+.search-icon {
+  font-size: 20px;
+  color: #9aa0a6;
+  margin-right: 12px;
+}
+.google-search-box input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 16px;
+  color: #202124;
+}
+.google-search-box input::placeholder {
+  color: #9aa0a6;
+}
+.clear-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  font-size: 20px;
+  color: #9aa0a6;
+  cursor: pointer;
+  border-radius: 50%;
+  transition: background 0.2s;
+}
+.clear-icon:hover {
+  background: #f1f3f4;
+  color: #5f6368;
+}
+
+.result-info { text-align: center; font-size: 14px; color: #64748b; }
 .result-info strong { color: #1e293b; }
 .grid {
   display: grid;

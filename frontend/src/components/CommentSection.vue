@@ -20,15 +20,16 @@
             <el-input
                 v-model="content"
                 type="textarea"
-                :rows="3"
+                :rows="4"
                 :maxlength="500"
                 show-word-limit
-                placeholder="写下你的想法..."
+                placeholder="欢迎留言发表您的看法！GNS不会基于政治观点移除任何评论，但请不要发布含有人身攻击或广告内容。"
                 resize="none" />
             <div class="input-footer">
+              <span class="community-guidelines">请注意，发表评论时应当始终做到尊重他人并遵守GNS的社区准则。</span>
               <el-button
                   type="primary"
-                  size="small"
+                  class="submit-btn"
                   :loading="submitting"
                   :disabled="!content.trim()"
                   @click="submitComment(null)">
@@ -40,8 +41,13 @@
       </template>
       <template v-else>
         <div class="login-tip">
-          <el-icon><ChatDotRound /></el-icon>
-          <span>请 <router-link to="/login">登录</router-link> 后发表评论</span>
+          <div class="login-tip-content">
+            <el-icon class="login-icon"><ChatDotRound /></el-icon>
+            <span>加入讨论，分享您的独到见解</span>
+          </div>
+          <router-link to="/login">
+            <el-button type="primary" round>立即登录 / 注册</el-button>
+          </router-link>
         </div>
       </template>
     </div>
@@ -53,7 +59,7 @@
 
     <!-- 评论列表 -->
     <div v-else-if="comments.length === 0" class="empty">
-      暂无评论，来发表第一条吧！
+      暂无评论
     </div>
 
     <div v-else class="comment-list">
@@ -84,7 +90,9 @@
                 class="action-btn"
                 :class="{ liked: comment.liked }"
                 @click="handleLike(comment)">
-              <span class="like-icon">{{ comment.liked ? '👍' : '👍' }}</span>
+              <svg class="like-icon" viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path>
+              </svg>
               <span class="like-count">{{ comment.likeCount || 0 }}</span>
             </span>
 
@@ -147,7 +155,9 @@
                       class="action-btn"
                       :class="{ liked: reply.liked }"
                       @click="handleLike(reply)">
-                    <span class="like-icon">👍</span>
+                    <svg class="like-icon" viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path>
+                    </svg>
                     <span class="like-count">{{ reply.likeCount || 0 }}</span>
                   </span>
                   <span
@@ -322,17 +332,72 @@ function formatTime(time) {
 
 /* 发评论框 */
 .comment-input-wrap {
-  background: #f8fafc; border: 1px solid #e2e8f0;
-  border-radius: 12px; padding: 16px; margin-bottom: 32px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 32px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+  transition: all 0.3s ease;
 }
-.input-row { display: flex; gap: 12px; align-items: flex-start; }
+.comment-input-wrap:focus-within {
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  border-color: #cbd5e1;
+}
+.input-row { display: flex; gap: 16px; align-items: flex-start; }
 .input-right { flex: 1; }
-.input-footer { display: flex; justify-content: flex-end; margin-top: 10px; }
-.login-tip {
-  display: flex; align-items: center; justify-content: center;
-  gap: 8px; padding: 20px; color: #64748b; font-size: 14px;
+
+:deep(.el-textarea__inner) {
+  background-color: #f8fafc;
+  border: none;
+  border-radius: 12px;
+  padding: 16px;
+  font-size: 15px;
+  color: #1e293b;
+  transition: all 0.3s;
+  box-shadow: none !important;
 }
-.login-tip a { color: #3b82f6; text-decoration: none; }
+:deep(.el-textarea__inner:focus) {
+  background-color: #ffffff;
+  box-shadow: inset 0 0 0 1px #3b82f6 !important;
+}
+
+.input-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+}
+.community-guidelines {
+  font-size: 12px;
+  color: #94a3b8;
+  max-width: 65%;
+  line-height: 1.5;
+}
+.submit-btn {
+  border-radius: 20px;
+  padding: 0 24px;
+  font-weight: 600;
+}
+
+.login-tip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 8px;
+}
+.login-tip-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #475569;
+  font-size: 15px;
+  font-weight: 500;
+}
+.login-icon {
+  font-size: 24px;
+  color: #3b82f6;
+}
 
 /* 评论列表 */
 .comment-list { display: flex; flex-direction: column; }
@@ -362,11 +427,13 @@ function formatTime(time) {
 .action-btn {
   font-size: 13px; color: #94a3b8; cursor: pointer;
   display: flex; align-items: center; gap: 4px;
-  transition: color .15s; user-select: none;
+  transition: all .15s; user-select: none;
 }
 .action-btn:hover { color: #64748b; }
+.action-btn:hover .like-icon { transform: translateY(-1px) scale(1.05); }
 .action-btn.liked { color: #3b82f6; }
-.action-btn.liked .like-icon { filter: none; }
+.action-btn.liked .like-icon { fill: #3b82f6; stroke: #3b82f6; }
+.like-icon { transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 .action-btn.danger:hover { color: #ef4444; }
 .like-count { font-size: 13px; }
 
