@@ -1,9 +1,9 @@
 <template>
   <div class="page">
-    <NavBar :categories="[]" />
+    <NavBar :categories="[]" :showHot="false" />
     <div class="container">
 
-      <div class="back" @click="$router.back()">← 返回</div>
+      <div class="back" @click="$router.back()">返回</div>
       <h2>个人中心</h2>
 
       <div class="profile-card" v-loading="loading">
@@ -163,7 +163,21 @@ async function handleUpdateUsername() {
 <style scoped>
 .page { min-height: 100vh; background: #f8fafc; }
 .container { max-width: 680px; margin: 0 auto; padding: 32px 24px; }
-.back { cursor: pointer; color: #3b82f6; margin-bottom: 16px; font-size: 14px; }
+.back {
+  display: inline-block;
+  background-color: #000;
+  color: #fff;
+  border-radius: 20px;
+  padding: 8px 16px;
+  margin-bottom: 24px;
+  font-size: 14px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background .2s;
+}
+.back:hover {
+  background-color: #333;
+}
 h2 { margin: 0 0 24px; color: #1e293b; font-size: 22px; }
 h3 { margin: 0 0 16px; color: #1e293b; font-size: 16px; font-weight: 600; }
 

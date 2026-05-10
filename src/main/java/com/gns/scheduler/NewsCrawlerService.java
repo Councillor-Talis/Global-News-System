@@ -121,7 +121,7 @@ public class NewsCrawlerService {
             article.setContent(content);
             article.setSource(config.getSourceName());
             article.setSourceUrl(item.getUrl());
-// 智能分类：关键词匹配优先，匹配不到才用来源配置的分类
+
             Long smartCategory = categorizer.categorize(
                     item.getTitle(),
                     item.getDescription(),
@@ -166,7 +166,7 @@ public class NewsCrawlerService {
         if (item.getUrl() != null) {
             sb.append("<p style='margin-top:16px;padding-top:12px;border-top:1px solid #e2e8f0'>")
                     .append("<a href='").append(item.getUrl())
-                    .append("' target='_blank' style='color:#3b82f6'>阅读原文 →</a></p>");
+                    .append("' target='_blank' class='read-original-btn'>阅读原文</a></p>");
         }
 
         return sb.toString();
@@ -192,4 +192,6 @@ public class NewsCrawlerService {
             return LocalDateTime.now();
         }
     }
+
+
 }

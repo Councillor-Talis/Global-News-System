@@ -1,9 +1,9 @@
 <template>
   <div>
-    <NavBar :categories="[]" />
+    <NavBar :categories="[]" :showHot="false" />
 
     <div class="page-container" v-if="article">
-      <div class="back" @click="$router.back()">← 返回</div>
+      <div class="back" @click="$router.back()">返回</div>
 
       <div class="layout">
 
@@ -12,8 +12,8 @@
           <div class="meta">
             <span class="source">{{ article.source }}</span>
             <span class="time">{{ article.pubTime }}</span>
-            <span class="views">👁 {{ article.viewCount }} 次阅读</span>
-            <span class="comment-count">💬 {{ commentCount }} 条评论</span>
+            <span class="views"><el-icon><View/></el-icon>{{ article.viewCount }} 次阅读</span>
+            <span class="comment-count"><el-icon><ChatDotRound/></el-icon>{{ commentCount }} 条评论</span>
           </div>
 
           <h1>{{ article.title }}</h1>
@@ -22,7 +22,7 @@
 
           <img v-if="article.coverImg" :src="article.coverImg" class="cover" />
 
-          <div class="content" v-html="article.content"></div>
+          <div class="content" v-html="processedContent"></div>
 
           <!-- 评论区 -->
           <CommentSection :articleId="article.id" />
@@ -78,7 +78,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import NavBar from '../components/NavBar.vue'
 import CommentSection from '../components/CommentSection.vue'
@@ -94,6 +94,13 @@ const commentCount = ref(0)
 const relatedArticles = ref([])
 const relatedLoading = ref(false)
 const defaultImg = 'https://picsum.photos/seed/default/400/240'
+
+const processedContent = computed(() => {
+  if (!article.value?.content) return ''
+  return article.value.content
+    .replace(/style='color:#3b82f6'/g, '')
+    .replace(/>阅读原文 →<\/a>/g, ' class="read-original-btn">阅读原文</a>')
+})
 
 onMounted(() => loadArticle())
 
@@ -158,11 +165,19 @@ function formatTime(time) {
 }
 
 .back {
-  cursor: pointer;
-  color: #3b82f6;
+  display: inline-block;
+  background-color: #000;
+  color: #fff;
+  border-radius: 20px;
+  padding: 8px 16px;
   margin-bottom: 24px;
   font-size: 14px;
-  display: inline-block;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background .2s;
+}
+.back:hover {
+  background-color: #333;
 }
 
 /* 左右布局 */
@@ -185,6 +200,11 @@ function formatTime(time) {
   color: #64748b;
   margin-bottom: 16px;
   flex-wrap: wrap;
+}
+.views, .comment-count {
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 .source { color: #bb1919; font-weight: 600; }
 
@@ -219,6 +239,20 @@ h1 {
 }
 .content :deep(p) { margin-bottom: 16px; }
 .content :deep(a) { color: #3b82f6; }
+
+.content :deep(.read-original-btn) {
+  display: inline-block;
+  background-color: #000;
+  color: #fff !important;
+  border-radius: 20px;
+  padding: 8px 16px;
+  font-size: 14px;
+  text-decoration: none;
+  transition: background .2s;
+}
+.content :deep(.read-original-btn):hover {
+  background-color: #333;
+}
 
 /* 右侧边栏 */
 .sidebar {

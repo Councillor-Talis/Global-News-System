@@ -8,11 +8,10 @@ spring:
     username: root
     password: 123456
 
-  spring:
-    elasticsearch:
-      uris: http://localhost:9200
-      connection-timeout: 5s
-      socket-timeout: 30s
+  elasticsearch:
+    uris: http://localhost:9200
+    connection-timeout: 5s
+    socket-timeout: 30s
 
   data:
     redis:
@@ -33,9 +32,11 @@ gns:
   jwt:
     secret: gns-secret-key-2024-global-news-system-jwt
     expire: 7200
+
   newsapi:
     key: ecba080cf907493c9e117a67249d8977
     base-url: https://newsapi.org/v2
+
   upload:
-    path: D:/code/global-news-system/uploads/avatar/   # 头像存储路径，改成你自己的路径
-    url-prefix: /uploads/avatar/                        # 前端访问前缀
+    path: D:/code/global-news-system/uploads/avatar/
+    url-prefix: /uploads/avatar/

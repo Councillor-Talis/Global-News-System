@@ -55,7 +55,7 @@
       <!-- 搜索框 + 右侧按钮 -->
       <div class="nav-right">
         <!-- 搜索 -->
-        <div class="search-wrap">
+        <div class="search-wrap" v-if="showSearchInput">
           <el-input
               v-model="searchKeyword"
               placeholder="搜索新闻..."
@@ -116,7 +116,8 @@ import { getHotNews } from '../api/news'
 const props = defineProps({
   categories: { type: Array, default: () => [] },
   activeCategoryId: [Number, null],
-  showHot: { type: Boolean, default: true }
+  showHot: { type: Boolean, default: true },
+  showSearchInput: { type: Boolean, default: true }
 })
 const emit = defineEmits(['categoryChange', 'hotModeChange'])
 
@@ -258,6 +259,25 @@ async function handleLogout() {
 /* 搜索 */
 .nav-right { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
 .search-wrap { display: flex; align-items: center; }
+.search-wrap :deep(.el-input__wrapper) {
+  border-radius: 20px;
+  background-color: #f1f3f4;
+  box-shadow: none !important;
+  border: 1px solid transparent;
+  transition: background-color 0.2s, box-shadow 0.2s, border-color 0.2s;
+  padding: 0 14px;
+}
+.search-wrap :deep(.el-input__wrapper.is-focus) {
+  background-color: #fff;
+  border-color: #dfe1e5;
+  box-shadow: 0 1px 6px rgba(32,33,36,0.15) !important;
+}
+.search-wrap :deep(.el-input__inner) {
+  color: #202124;
+}
+.search-wrap :deep(.el-input__inner::placeholder) {
+  color: #9aa0a6;
+}
 .user-info {
   display: flex; align-items: center; gap: 6px;
   cursor: pointer; font-size: 14px; color: #1e293b;
